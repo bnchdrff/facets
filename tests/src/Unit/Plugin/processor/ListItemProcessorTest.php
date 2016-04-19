@@ -8,6 +8,7 @@ use Drupal\facets\Result\Result;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Tests\UnitTestCase;
 use Drupal\Core\Config\ConfigManager;
+use Drupal\Core\Entity\EntityFieldManager;
 
 /**
  * Unit test for processor.
@@ -46,8 +47,12 @@ class ListItemProcessorTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
+    $entity_field_manager = $this->getMockBuilder(EntityFieldManager::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+
     $processor_id = 'list_item';
-    $this->processor = new ListItemProcessor([], $processor_id, [], $config_manager);
+    $this->processor = new ListItemProcessor([], $processor_id, [], $config_manager, $entity_field_manager);
   }
 
   /**
@@ -73,8 +78,12 @@ class ListItemProcessorTest extends UnitTestCase {
       ->method('loadConfigEntityByName')
       ->willReturn($field);
 
+    $entity_field_manager = $this->getMockBuilder(EntityFieldManager::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+
     $processor_id = 'list_item';
-    $processor = new ListItemProcessor([], $processor_id, [], $config_manager);
+    $processor = new ListItemProcessor([], $processor_id, [], $config_manager, $entity_field_manager);
 
     $facet = new Facet([], 'facet');
     $facet->setFieldIdentifier('test_facet');
