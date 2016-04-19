@@ -14,7 +14,7 @@ use Drupal\Core\Config\ConfigManager;
  *
  * @group facets
  */
-class LimitItemProcessorTest extends UnitTestCase {
+class ListItemProcessorTest extends UnitTestCase {
 
   /**
    * The processor to be tested.
