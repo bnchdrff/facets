@@ -78,33 +78,23 @@ class ListItemProcessor extends ProcessorPluginBase implements BuildProcessorInt
       $entity = str_replace('entity:', '', $field->getDatasourceId());
     }
 
-    // If it's an entity base field, we find it in the field definitions:
+    // If it's an entity base field, we find it in the field definitions.
+    // Unfortunately we don't have access to the bundle via SearchApiFacetSourceInterface,
+    // so we check the entity's base fields only.
     $baseFields = $this->entityFieldManager->getFieldDefinitions($entity, '');
+
     // If it's a field.module field we can look it up this way:
     $config_entity_name = sprintf('field.storage.%s.%s', $entity, $field_identifier);
 
-    // Is this a base field..?
-    if ($field = $baseFields[$field_identifier]) {
-      $function = $field->getSetting('allowed_values_function');
-
-      if (empty($function)) {
-        $allowed_values = $field->getSetting('allowed_values');
-      }
-      else {
-        $allowed_values = ${$function}($field);
-      }
-
-      if (is_array($allowed_values)) {
-        /** @var \Drupal\facets\Result\ResultInterface $result */
-        foreach ($results as &$result) {
-          if (isset($allowed_values[$result->getRawValue()])) {
-            $result->setDisplayValue($allowed_values[$result->getRawValue()]);
-          }
-        }
-      }
+    // Is this a base field, or a field.module field?
+    if (isset($baseFields[$field_identifier])) {
+      $field = $baseFields[$field_identifier];
     }
-    // ... or a field.module field?
-    elseif ($field = $this->configManager->loadConfigEntityByName($config_entity_name)) {
+    elseif ($this->configManager->loadConfigEntityByName($config_entity_name) !== NULL) {
+      $field = $this->configManager->loadConfigEntityByName($config_entity_name);
+    }
+
+    if ($field) {
       $function = $field->getSetting('allowed_values_function');
 
       if (empty($function)) {
