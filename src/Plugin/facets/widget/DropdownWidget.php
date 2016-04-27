@@ -47,10 +47,20 @@ class DropdownWidget implements WidgetInterface {
       '#title' => $this->t('Show the amount of results'),
     ];
 
+    $form['autosubmitdropdown'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Auto-submit dropdown on select'),
+    ];
+
     if (!is_null($config)) {
       $widget_configs = $config->get('widget_configs');
+
       if (isset($widget_configs['show_numbers'])) {
         $form['show_numbers']['#default_value'] = $widget_configs['show_numbers'];
+      }
+
+      if (isset($widget_configs['autosubmitdropdown'])) {
+        $form['autosubmitdropdown']['#default_value'] = $widget_configs['autosubmitdropdown'];
       }
     }
 

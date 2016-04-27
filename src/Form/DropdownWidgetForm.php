@@ -87,6 +87,14 @@ class DropdownWidgetForm implements BaseFormIdInterface {
       '#value' => 'submit',
     ];
 
+    // If autosubmit is enabled, add the library & make it aware of this facet.
+    if (!empty($configuration['autosubmitdropdown'])) {
+      // Provide a nice selector for this form element.
+      $selector = $form['#attributes']['class'][0];
+      $form['#attached']['drupalSettings']['facets']['autosubmitdropdown'][$selector] = TRUE;
+      $form['#attached']['library'][] = 'facets/drupal.facets.autosubmit-facet-dropdown';
+    }
+
     return $form;
   }
 
