@@ -108,9 +108,7 @@ trait ExampleContentTrait {
     $form_values = [
       'id' => $id,
       'status' => 1,
-      'url_alias' => $id,
       'name' => $name,
-      'weight' => 2,
       'facet_source_id' => 'search_api_views:search_api_test_view:page_1',
       'facet_source_configs[search_api_views:search_api_test_view:page_1][field_identifier]' => $field,
     ];
@@ -131,8 +129,8 @@ trait ExampleContentTrait {
    *   Another string.
    */
   protected function assertStringPosition($x, $y) {
-    $this->assertText($x);
-    $this->assertText($y);
+    $this->assertRaw($x);
+    $this->assertRaw($y);
 
     $x_position = strpos($this->getRawContent(), $x);
     $y_position = strpos($this->getRawContent(), $y);

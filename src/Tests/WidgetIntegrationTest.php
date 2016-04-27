@@ -51,9 +51,7 @@ class WidgetIntegrationTest extends WebTestBase {
     $form_values = [
       'id' => $id,
       'status' => 1,
-      'url_alias' => $id,
       'name' => $name,
-      'weight' => 13,
       'facet_source_id' => 'search_api_views:search_api_test_view:page_1',
       'facet_source_configs[search_api_views:search_api_test_view:page_1][field_identifier]' => 'type',
     ];
@@ -90,9 +88,7 @@ class WidgetIntegrationTest extends WebTestBase {
     $form_values = [
       'id' => $id,
       'status' => 1,
-      'url_alias' => $id,
       'name' => $name,
-      'weight' => 12,
       'facet_source_id' => 'search_api_views:search_api_test_view:page_1',
       'facet_source_configs[search_api_views:search_api_test_view:page_1][field_identifier]' => 'type',
     ];
@@ -105,9 +101,7 @@ class WidgetIntegrationTest extends WebTestBase {
     $form_values = [
       'id' => $id_2,
       'status' => 1,
-      'url_alias' => $id_2,
       'name' => $name_2,
-      'weight' => 8,
       'facet_source_id' => 'search_api_views:search_api_test_view:page_1',
       'facet_source_configs[search_api_views:search_api_test_view:page_1][field_identifier]' => 'keywords',
     ];
@@ -164,9 +158,7 @@ class WidgetIntegrationTest extends WebTestBase {
     $form_values = [
       'id' => $id,
       'status' => 1,
-      'url_alias' => $id,
       'name' => $name,
-      'weight' => 11,
       'facet_source_id' => 'search_api_views:search_api_test_view:page_1',
       'facet_source_configs[search_api_views:search_api_test_view:page_1][field_identifier]' => 'type',
     ];
@@ -188,7 +180,7 @@ class WidgetIntegrationTest extends WebTestBase {
     $this->assertLink('article');
 
     $this->clickLink('item');
-    $this->assertLink('(-) item');
+    $this->assertRaw('<span class="facet-deactivate">(-)</span> item');
   }
 
   /**
@@ -204,9 +196,7 @@ class WidgetIntegrationTest extends WebTestBase {
     $form_values = [
       'id' => $id,
       'status' => 1,
-      'url_alias' => $id,
       'name' => $name,
-      'weight' => 10,
       'facet_source_id' => 'search_api_views:search_api_test_view:page_1',
       'facet_source_configs[search_api_views:search_api_test_view:page_1][field_identifier]' => 'type',
     ];
@@ -249,9 +239,7 @@ class WidgetIntegrationTest extends WebTestBase {
     $form_values = [
       'id' => $id,
       'status' => 1,
-      'url_alias' => $id,
       'name' => $name,
-      'weight' => 9,
       'facet_source_id' => 'search_api_views:search_api_test_view:page_1',
       'facet_source_configs[search_api_views:search_api_test_view:page_1][field_identifier]' => 'type',
     ];
@@ -279,8 +267,8 @@ class WidgetIntegrationTest extends WebTestBase {
 
     // Go back to the same view and check that links now display the count.
     $this->drupalGet('search-api-test-fulltext');
-    $this->assertLink('item (3)');
-    $this->assertLink('article (2)');
+    $this->assertRaw('item <span class="facet-count">(3)</span>');
+    $this->assertRaw('article <span class="facet-count">(2)</span>');
 
     $this->drupalGet($facet_edit_page);
     $this->drupalPostForm(NULL, ['widget' => 'links', 'widget_configs[show_numbers]' => FALSE], $this->t('Save'));

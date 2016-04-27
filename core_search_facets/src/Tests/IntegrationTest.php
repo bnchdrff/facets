@@ -8,7 +8,7 @@ use Drupal\node\Entity\Node;
 /**
  * Tests the admin UI with the core search facet source.
  *
- * @group core_search_facets
+ * @group facets
  */
 class IntegrationTest extends WebTestBase {
 
@@ -67,12 +67,12 @@ class IntegrationTest extends WebTestBase {
 
     // Verify that the number of results per item.
     $this->drupalGet('search/node', ['query' => ['keys' => 'test']]);
-    $this->assertLink('page (19)');
-    $this->assertLink('article (10)');
+    $this->assertRaw('page <span class="facet-count">(19)</span>');
+    $this->assertRaw('article <span class="facet-count">(10)</span>');
 
     // Verify that the label is correct for a clicked link.
-    $this->clickLink('page (19)');
-    $this->assertLink('(-) page (19)');
+    $this->clickLinkPartialName('page');
+    $this->assertRaw('<span class="facet-deactivate">(-)</span> page <span class="facet-count">(19)</span>');
 
     // Do not show the block on empty behaviors.
     // Truncate the search_index table because, for the moment, we don't have
@@ -113,27 +113,27 @@ class IntegrationTest extends WebTestBase {
 
     // Assert date facets.
     $this->drupalGet('search/node', ['query' => ['keys' => 'test']]);
-    $this->assertLink('February 2016 (9)');
-    $this->assertLink('March 2016 (10)');
-    $this->assertLink('April 2016 (10)');
+    $this->assertRaw('February 2016 <span class="facet-count">(9)</span>');
+    $this->assertRaw('March 2016 <span class="facet-count">(10)</span>');
+    $this->assertRaw('April 2016 <span class="facet-count">(10)</span>');
     $this->assertResponse(200);
 
-    $this->clickLink('March 2016 (10)');
+    $this->clickLinkPartialName('March 2016');
     $this->assertResponse(200);
-    $this->assertLink('March 8, 2016 (1)');
-    $this->assertLink('March 9, 2016 (2)');
+    $this->assertRaw('March 8, 2016 <span class="facet-count">(1)</span>');
+    $this->assertRaw('March 9, 2016 <span class="facet-count">(2)</span>');
 
-    $this->clickLink('March 9, 2016 (2)');
+    $this->clickLinkPartialName('March 9');
     $this->assertResponse(200);
-    $this->assertLink('10 AM (1)');
-    $this->assertLink('12 PM (1)');
+    $this->assertRaw('10 AM <span class="facet-count">(1)</span>');
+    $this->assertRaw('12 PM <span class="facet-count">(1)</span>');
 
     $this->drupalGet('search/node', ['query' => ['keys' => 'test']]);
-    $this->assertLink('April 2016 (10)');
-    $this->clickLink('April 2016 (10)');
+    $this->assertRaw('April 2016 <span class="facet-count">(10)</span>');
+    $this->clickLinkPartialName('April 2016');
     $this->assertResponse(200);
-    $this->assertLink('April 1, 2016 (1)');
-    $this->assertLink('April 2, 2016 (1)');
+    $this->assertRaw('April 1, 2016 <span class="facet-count">(1)</span>');
+    $this->assertRaw('April 2, 2016 <span class="facet-count">(1)</span>');
   }
 
   /**
@@ -159,11 +159,11 @@ class IntegrationTest extends WebTestBase {
     search_update_totals();
 
     $this->drupalGet('search/node', ['query' => ['keys' => 'test']]);
-    $this->assertLink('December 2016 (1)');
-    $this->clickLink('December 2016 (1)');
+    $this->assertRaw('December 2016 <span class="facet-count">(1)</span>');
+    $this->clickLinkPartialName('December 2016');
     $this->assertResponse(200);
-    $this->assertLink('December 3, 2016 (1)');
-    $this->clickLink('December 3, 2016 (1)');
+    $this->assertRaw('December 3, 2016 <span class="facet-count">(1)</span>');
+    $this->clickLinkPartialName('December 3, 2016');
     $this->assertResponse(200);
 
   }
@@ -207,9 +207,7 @@ class IntegrationTest extends WebTestBase {
     $form_values = [
       'id' => $id,
       'status' => 1,
-      'url_alias' => $id,
       'name' => $name,
-      'weight' => 2,
       'facet_source_id' => 'core_node_search:node_search',
       'facet_source_configs[core_node_search:node_search][field_identifier]' => $type,
     ];
@@ -359,14 +357,12 @@ class IntegrationTest extends WebTestBase {
       'name' => '',
       'id' => $facet_id,
       'status' => 1,
-      'url_alias' => $facet_id,
-      'weight' => 4,
     ];
 
     // Try filling out the form, but without having filled in a name for the
     // facet to test for form errors.
     $this->drupalPostForm($facet_add_page, $form_values, $this->t('Save'));
-    $this->assertText($this->t('Facet name field is required.'));
+    $this->assertText($this->t('Name field is required.'));
     $this->assertText($this->t('Facet source field is required.'));
 
     // Make sure that when filling out the name, the form error disappears.
@@ -380,7 +376,7 @@ class IntegrationTest extends WebTestBase {
 
     // The facet field is still required.
     $this->drupalPostForm(NULL, $form_values, $this->t('Save'));
-    $this->assertText($this->t('Facet field field is required.'));
+    $this->assertText($this->t('Field field is required.'));
 
     // Fill in all fields and make sure the 'field is required' message is no
     // longer shown.
