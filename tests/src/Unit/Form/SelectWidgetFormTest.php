@@ -143,6 +143,46 @@ class SelectWidgetFormTest extends UnitTestCase {
   }
 
   /**
+   * Tests widget form, make sure autosubmit dropdown setting works.
+   */
+  public function testAutosubmitDropdown() {
+    $facet = new Facet([], 'facet');
+    $facet->setResults($this->originalResults);
+    $facet->setFieldIdentifier('zoo__animal');
+    $facet->setWidgetConfigs(['autosubmitdropdown' => 0]);
+
+    $form_state = new FormState();
+    $form_state->addBuildInfo('args', [$facet]);
+    $form = [];
+
+    $widget_form = new DropdownWidgetForm($facet);
+    $built_form = $widget_form->buildForm($form, $form_state);
+
+    $this->assertInternalType('array', $built_form);
+
+    // JS lib shouldn't be included.
+    $this->assertFalse(isset($built_form['#attached']['library']));
+    // Settings shouldn't be set.
+    $this->assertFalse(isset($built_form['#attached']['drupalSettings']['facets']['autosubmitdropdown']));
+
+    // Enable the 'autosubmitdropdown' setting to make sure that the switch
+    // between those settings works.
+    $facet->setWidgetConfigs(['autosubmitdropdown' => 1]);
+
+    // Mock an attributes array.
+    $form['#attributes']['class'][] = 'testing123';
+
+    $built_form = $widget_form->buildForm($form, $form_state);
+
+    $this->assertInternalType('array', $built_form);
+
+    // JS lib should be included.
+    $this->assertTrue(isset($built_form['#attached']['library']));
+    // Settings should be set.
+    $this->assertTrue(isset($built_form['#attached']['drupalSettings']['facets']['autosubmitdropdown']));
+  }
+
+  /**
    * Tests form default methods.
    */
   public function testForm() {
